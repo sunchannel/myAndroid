@@ -1,4 +1,4 @@
-package com.example.uitest;
+package com.exam.uitest;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -30,33 +30,15 @@ public class MainActivity extends Activity {
 		RailwayLine rl4 = new RailwayLine(this, "B-D", 100, 800, 600, 100);
 		RailwayLine rl5 = new RailwayLine(this, "C-D", 600, 800, 600, 100);
 
-		fl.setStations(rs).setStations(rs2).setLines(rl).setLines(rl1);
-
+		fl.setStations(rs).setStations(rs2).setStations(rs3).setStations(rs4)
+				.setLines(rl).setLines(rl1).setLines(rl2).setLines(rl3)
+				.setLines(rl4).setLines(rl5);
 		Button bigger = (Button) findViewById(R.id.text);
-		Button smaller = (Button) findViewById(R.id.button1);
 		bigger.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				size = size * 3 / 2;
-				fl.setSizex(size);
-				fl.setSizey(size);
-				fl.setFixable(true);
-				fl.reDraw();
-				fl.setFixable(false);
-			}
-		});
-
-		smaller.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				size = size * 2 / 3;
-				fl.setSizex(size);
-				fl.setSizey(size);
-				fl.setFixable(true);
-				fl.reDraw();
-				fl.setFixable(false);
+				fl.reset();
 			}
 		});
 

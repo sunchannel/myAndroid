@@ -1,4 +1,4 @@
-package com.example.uitest;
+package com.exam.uitest;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,18 +9,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class RailwayStation extends View {
+public class RailwayStation extends View implements Cloneable {
 
 	private Paint mPaint;
-	private float px;
-	private float py;
 	private String name;
-	private float sizex;
-	private float sizey;
 	private Point point;
-	private Point originPoint;
-	private float prepointx;
-	private float prepointy;
 
 	public RailwayStation(Context context, String name, int px, int py) {
 		super(context);
@@ -28,34 +21,8 @@ public class RailwayStation extends View {
 		mPaint.setColor(Color.RED);
 		mPaint.setStrokeWidth(1);
 		point = new Point();
-		originPoint = new Point();
-		originPoint.setX(0);
-		originPoint.setY(0);
 		point.setX(px).setY(py);
 		this.name = name;
-		sizex = 1;
-		sizey = 1;
-	}
-
-	private void init() {
-		this.px = (point.getX() + originPoint.getX()) * sizex;
-		this.py = (point.getY() + originPoint.getY()) * sizey;
-	}
-
-	public float getSizex() {
-		return sizex;
-	}
-
-	public void setSizex(float sizex) {
-		this.sizex = sizex;
-	}
-
-	public float getSizey() {
-		return sizey;
-	}
-
-	public void setSizey(float sizey) {
-		this.sizey = sizey;
 	}
 
 	public Point getPoint() {
@@ -64,11 +31,6 @@ public class RailwayStation extends View {
 
 	public void setPoint(Point point) {
 		this.point = point;
-	}
-
-	public void setOriginPoint(float x, float y) {
-		this.originPoint.setX(x);
-		this.originPoint.setY(y);
 	}
 
 	@Override
@@ -80,14 +42,14 @@ public class RailwayStation extends View {
 	}
 
 	private int measureHeight(int measureSpec) {
-		int specMode = MeasureSpec.getMode(measureSpec);
+		// int specMode = MeasureSpec.getMode(measureSpec);
 		int specSize = MeasureSpec.getSize(measureSpec);
 
 		return specSize;
 	}
 
 	private int measureWidth(int measureSpec) {
-		int specMode = MeasureSpec.getMode(measureSpec);
+		// int specMode = MeasureSpec.getMode(measureSpec);
 		int specSize = MeasureSpec.getSize(measureSpec);
 
 		return specSize;
@@ -96,21 +58,17 @@ public class RailwayStation extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		// super.onDraw(canvas);
-		init();
-		canvas.drawCircle(px, py, 5, mPaint);
-		canvas.drawCircle(px, py, 10, mPaint);
+		canvas.drawCircle(point.getX(), point.getY(), 5, mPaint);
+		canvas.drawCircle(point.getX(), point.getY(), 10, mPaint);
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		// return super.onTouchEvent(event);
 		int action = event.getAction();
 		if (isPoint(event.getX(), event.getY())) {
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
-				prepointx = event.getX();
-				prepointy = event.getY();
 				Log.i("Station", name + "action down");
 				new AlertDialog.Builder(getContext()).setTitle(name)
 						.setMessage(name + "具体信息:").show();
@@ -128,8 +86,8 @@ public class RailwayStation extends View {
 
 	private boolean isPoint(float x, float y) {
 
-		float disx = x - px;
-		float disy = y - py;
+		float disx = x - point.getX();
+		float disy = y - point.getY();
 
 		float disa = disx * disx + disy * disy;
 		if (disa > 625) {
@@ -137,5 +95,17 @@ public class RailwayStation extends View {
 		} else {
 			return true;
 		}
+	}
+
+	@Override
+	protected Object clone() {
+		RailwayStation rs = null;
+		try {
+			rs = (RailwayStation) super.clone();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		rs.point = (Point) point.clone();
+		return rs;
 	}
 }

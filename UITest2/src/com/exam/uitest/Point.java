@@ -1,6 +1,6 @@
-package com.example.uitest;
+package com.exam.uitest;
 
-public class Point {
+public class Point implements Cloneable {
 	private float x;
 	private float y;
 
@@ -47,4 +47,14 @@ public class Point {
 		return true;
 	}
 
+	@Override
+	public Object clone() {
+		Point p = null;
+		try {
+			p = (Point) super.clone();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return p;
+	}
 }

@@ -12,15 +12,17 @@ import android.view.View;
 public class RailwayLine extends View {
 
 	private Paint mPaint;
-	private int px;
-	private int py;
+	private float px;
+	private float py;
 	private double distance;
 	private double stopX;
 	private double stopY;
 	private String name;
 	private Point startpoint;
 	private Point endpoint;
-	private int size;
+	private float sizex;
+	private float sizey;
+	private Point originPoint;
 
 	// public RailwayLine(Context context, String name, int px, int py,
 	// float distance, float angle) {
@@ -44,28 +46,59 @@ public class RailwayLine extends View {
 		this.name = name;
 		startpoint = new Point();
 		startpoint.setX(px).setY(py);
+		originPoint = new Point();
+		originPoint.setX(0);
+		originPoint.setY(0);
 		endpoint = new Point();
 		endpoint.setX(stopx).setY(stopy);
-		size = 1;
-		init();
+		sizex = 1;
+		sizey = 1;
 	}
 
 	private void init() {
-		this.px = startpoint.getX() * size;
-		this.py = startpoint.getY() * size;
-		this.stopX = endpoint.getX() * size;
-		this.stopY = endpoint.getY() * size;
+		this.px = (startpoint.getX() + originPoint.getX()) * sizex;
+		this.py = (startpoint.getY() + originPoint.getY()) * sizey;
+		this.stopX = (endpoint.getX() + originPoint.getX()) * sizex;
+		this.stopY = (endpoint.getY() + originPoint.getY()) * sizey;
 		this.distance = Math.sqrt((stopX - px) * (stopX - px) + (stopY - py)
 				* (stopY - py));
 	}
 
-	public int getSize() {
-		return size;
+	public float getSizex() {
+		return sizex;
 	}
 
-	public void setSize(int size) {
-		this.size = size;
-		init();
+	public void setSizex(float sizex) {
+		this.sizex = sizex;
+	}
+
+	public float getSizey() {
+		return sizey;
+	}
+
+	public void setSizey(float sizey) {
+		this.sizey = sizey;
+	}
+
+	public Point getStartpoint() {
+		return startpoint;
+	}
+
+	public void setStartpoint(Point startpoint) {
+		this.startpoint = startpoint;
+	}
+
+	public Point getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(Point endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public void setOriginPoint(float x, float y) {
+		this.originPoint.setX(x);
+		this.originPoint.setY(y);
 	}
 
 	@Override
@@ -93,6 +126,7 @@ public class RailwayLine extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		// super.onDraw(canvas);
+		init();
 		canvas.drawLine(px, py, (float) stopX, (float) stopY, mPaint);
 	}
 
@@ -101,23 +135,24 @@ public class RailwayLine extends View {
 		// TODO Auto-generated method stub
 		// return super.onTouchEvent(event);
 		int action = event.getAction();
-
-		switch (action) {
-		case MotionEvent.ACTION_DOWN:
-			float pointX = event.getX();
-			float pointY = event.getY();
-			Log.i("Tag", "点击x:" + pointX + ", y:" + pointY);
-			if (isPoint(pointX, pointY)) {
-				Log.i("Tag", "弹出信息！");
+		if (isPoint(event.getX(), event.getY())) {
+			switch (action) {
+			case MotionEvent.ACTION_DOWN:
+				float pointX = event.getX();
+				float pointY = event.getY();
+				// Log.i("Tag", "点击x:" + pointX + ", y:" + pointY);
 				new AlertDialog.Builder(getContext()).setTitle(name)
 						.setMessage(name + "具体信息").show();
-				return true;
-			} else {
-				return false;
+				Log.i("Line", name + "action down");
+				break;
+			case MotionEvent.ACTION_CANCEL:
+				Log.i("Line", name + "action cancel");
+				break;
+			case MotionEvent.ACTION_UP:
+				Log.i("Line", name + "action up");
 			}
-		default:
-			return false;
 		}
+		return false;
 	}
 
 	private boolean isPoint(float x, float y) {
@@ -135,7 +170,7 @@ public class RailwayLine extends View {
 				* (p - distance));
 
 		double disa = s / distance;
-		Log.i("Tag", "三边长：" + distostart + ", " + distostop + ", " + disa);
+		// Log.i("Tag", "三边长：" + distostart + ", " + distostop + ", " + disa);
 		if (disa < 25 && ((y - stopY) * (py - y)) > -50
 				&& ((x - px) * (stopX - x)) > -50 && distostart > 25
 				&& distostop > 25) {
